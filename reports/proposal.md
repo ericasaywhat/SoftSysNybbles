@@ -1,6 +1,6 @@
-# Nybbles
+# Nybbles: Project Proposal
 
-### Project Proposal
+### Erica Lee & Emily Yeh
 
 Our main goal for this project is to gain a better understanding of C, especially with regards to using pointers and various C libraries. To achieve this goal, we will build a game with code that is object-oriented and memory- and runtime-efficient. The minimum viable product will be a game that includes a target enemy, a mechanism by which the player can shoot missiles, and a map displayed in the terminal on which the player can move.
  
