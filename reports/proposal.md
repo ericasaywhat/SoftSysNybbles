@@ -1,4 +1,4 @@
-# Nybbles: Project Proposal
+# Nybbles: Wumpus Murdering, Battleship Sinking
 
 ### Erica Lee & Emily Yeh
 
