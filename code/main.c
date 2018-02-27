@@ -11,6 +11,28 @@
 #define PLAYER 5
 
 int playerx, playery;
+/*BLAH BLAH POSITIONS
+
+1) implement get user input in main
+======timeless================
+
+void playerMovement()
+	if hit by wumpus game over
+	if abduct by bat rando movement
+	if fall in pit game over
+void shoot()
+	if no hit wumpus then wumpus movement
+	if hit wumpus win
+void wumpusMovement()
+void batAbduction()
+
+
+ctrl + arrow/ wasd keys is movement
+alt + arrow/ wasd keys is shooting
+void gameOver()
+void win()
+*/
+
 
 void printMap(int** map) {
 	int i, j;
