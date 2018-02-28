@@ -11,9 +11,14 @@
 #define PLAYER 5
 
 int playerx, playery;
-/*BLAH BLAH POSITIONS
+int pitx, pity;
+int wumx, wumy;
+int batx, baty;
+
+/*
 
 1) implement get user input in main
+
 ======timeless================
 
 void playerMovement()
@@ -33,7 +38,9 @@ void gameOver()
 void win()
 */
 
+void playerMovement(){
 
+}
 void printMap(int** map) {
 	int i, j;
 
@@ -57,9 +64,19 @@ void placeObject(int** map, int object) {
 
 	printf("%i, %i\n", x, y);
 
-	if (object == PLAYER) {
+	switch(object) {
+	case PLAYER:
 		playerx = x;
 		playery = y;
+	case BAT:
+		batx = x;
+		baty = y;
+	case PIT:
+		pitx = x;
+		pity = y;
+	case WUM:
+		wumx = x;
+		wumy = y;
 	}
 
 	map[y][x] = object;
