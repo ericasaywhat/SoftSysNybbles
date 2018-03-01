@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <assert.h>
 
 #define WIDTH 5
@@ -38,9 +39,69 @@ void gameOver()
 void win()
 */
 
-void playerMovement(){
+void shoot(){
 
 }
+void gameOver(){
+	puts("Game Over!");
+	//TODO: the stuff in main maybe move out the map to global
+}
+
+void batAbduction(){
+
+}
+
+void checkConsequences(){
+	if((playerx==pitx && playery==pity) || (playerx==wumx && playery==wumy)){  gameOver();  }
+	else if(playerx==batx && playery==baty){  batAbduction();  }
+	else {
+		if(playerx==wumx || playery==wumy){
+			puts("I hear the wumpus!");
+		}
+		if(playerx==pitx || playery==pity){
+			puts("There is imminent danger...");
+		}
+		if(playerx==batx || playery==baty){
+			puts("I hear the flapping of wings");
+		}
+	}
+
+	// default:
+	// 	puts("I don't feel anything.");
+	// }
+}
+
+void playerMovement(char direction){
+	switch(direction){
+	//player shooting
+	case 'W':
+	case 'A':
+	case 'S':
+	case 'D':
+		shoot(direction);
+		break;
+	//player movements
+	case 'w':
+		playery--;
+		break;
+	case 'a':
+		playerx--;
+		break;
+	case 's':
+		playery++;
+		break;
+	case 'd':
+		playerx++;
+		break;
+	default:
+		puts("do not understand direction given");
+
+	}
+	checkConsequences();
+}
+
+
+
 void printMap(int** map) {
 	int i, j;
 
@@ -55,28 +116,31 @@ void printMap(int** map) {
 void placeObject(int** map, int object) {
 	int x = rand()%WIDTH;
 	int y = rand()%HEIGHT;
-
-
-	while (map[x][y] != 0) {
+	while (map[y][x] != 0) {
+		puts("repetition");
 		x = rand()%WIDTH;
 		y = rand()%HEIGHT;
 	}
-
-	printf("%i, %i\n", x, y);
 
 	switch(object) {
 	case PLAYER:
 		playerx = x;
 		playery = y;
+		break;
 	case BAT:
 		batx = x;
 		baty = y;
+		break;
 	case PIT:
 		pitx = x;
 		pity = y;
+		break;
 	case WUM:
 		wumx = x;
 		wumy = y;
+		break;
+	default:
+		puts("do not recognize object to be placed");
 	}
 
 	map[y][x] = object;
@@ -106,6 +170,7 @@ int** map() {
 
 int main() {
 	int** arr = map();
+	// checkConsequences();
 	free(*arr);
 	free(arr);
 	return 0;
