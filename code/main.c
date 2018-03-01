@@ -1,7 +1,7 @@
-#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 #include <assert.h>
 
 #define WIDTH 5
@@ -39,6 +39,10 @@ alt + arrow/ wasd keys is shooting
 void gameOver()
 void win()
 */
+
+void win(){
+	puts("YOU'VE WON");
+}
 
 void shoot(){
 
