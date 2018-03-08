@@ -8,7 +8,7 @@ Our main goal for this project is to gain a better understanding of C, especiall
 
 #### Current Status
 
-Currently, we have our MVP completed; we implemented a target enemy, a way for the player to shoot at the enemy, and a map that displays the current locations of all the elements of the game. In addition, since the player is able to input a command to move around the map, we were able to implement a way for the player to input a similar command that shoots an arrow in the direction of their choosing.
+Currently, we have our MVP completed; we implemented a target enemy as a variable, a way for the player to shoot at the enemy via reading and parsing standard input, and a map that displays the current locations of all the elements of the game as a 2-dimensional array that is randomly generated at the start of the game. In addition, since the player is able to input a command to move around the map, we were able to implement a way for the player to input a similar command that shoots an arrow in the direction of their choosing.
 
 Originally, text prompts were a stretch goal for us, because we were unsure how necessary they would be for the game. However, we eventually decided to implement prompts even before completing our MVP because we found that they are an important part of the Hunt the Wumpus game.
 
