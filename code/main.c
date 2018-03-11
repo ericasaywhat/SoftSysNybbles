@@ -29,14 +29,6 @@ void shoot()
 void wumpusMovement()
 void batAbduction()
 
-<<<<<<< HEAD
-=======
-
-wasd keys is movement
-WASD keys is shooting
-void gameOver()
-void win()
->>>>>>> 5d7484ae8e0fa6ff1d0f6d232126605473a0974d
 */
 void wumpusMovement(){
 
@@ -59,15 +51,19 @@ void shoot(char direction){
 	case 'W':
 		if(playery < wumy){  endGame(1);  }
 		else if(playery > wumy){  wumpusMovement();  }
+		break;
 	case 'S':
 		if(playery < wumy){  wumpusMovement();  }
 		else if(playery > wumy){  endGame(1);  }
+		break;
 	case 'A':
 		if(playerx < wumx){  endGame(1);  }
 		else if(playerx > wumx){  wumpusMovement();  }
+		break;
 	case 'D':
 		if(playerx < wumx){  wumpusMovement();  }
 		else if(playerx > wumx){  endGame(1);  }
+		break;
 
 	}
 }
