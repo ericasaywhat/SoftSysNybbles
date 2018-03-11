@@ -179,9 +179,28 @@ int** map() {
 	return map;
 }
 
+void getKeyPress() {
+	char s;
+	char valid_directions[] = "wasdWASD";
+
+	s = getchar();
+
+	for (int i = 0; i < strlen(valid_directions); i++) {
+		if (s == valid_directions[i]) {
+			playerMovement(s);
+		}
+	}
+}
+
 int main() {
 	int** arr = map();
 	// checkConsequences();
+	signal(SIGINT, INThandler);
+    while (1) {
+        getKeyPress();
+    }
+    return 0;
+	
 	free(*arr);
 	free(arr);
 	return 0;
