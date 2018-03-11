@@ -22,6 +22,8 @@ int batx, baty;
 
 void INThandler(int);
 void placeObject(int** map, int object);
+void printMap(int** map);
+void wumpusMovement(int** map);
 
 /*
 void shoot()
@@ -30,15 +32,13 @@ void shoot()
 void wumpusMovement()
 void batAbduction()
 
+<<<<<<< HEAD
 
 wasd keys is movement
 WASD keys is shooting
 void gameOver()
 */
 
-void shoot(){
-
-}
 void endGame(int condition){
 	switch (condition){
 	case 0:
@@ -58,6 +58,28 @@ void endGame(int condition){
 void batAbduction(int** map) {
 	map[playery][playerx] = 0;
 	placeObject(map, PLAYER);
+}
+
+void shoot(char direction, int** map){
+	switch(direction){
+	case 'W':
+		if(playery < wumy){  endGame(1);  }
+		else if(playery > wumy){  wumpusMovement(map);  }
+		break;
+	case 'S':
+		if(playery < wumy){  wumpusMovement(map);  }
+		else if(playery > wumy){  endGame(1);  }
+		break;
+	case 'A':
+		if(playerx < wumx){  endGame(1);  }
+		else if(playerx > wumx){  wumpusMovement(map);  }
+		break;
+	case 'D':
+		if(playerx < wumx){  wumpusMovement(map);  }
+		else if(playerx > wumx){  endGame(1);  }
+		break;
+
+	}
 }
 
 /*
@@ -97,7 +119,7 @@ void playerMovement(char direction, int** map){
 	case 'A':
 	case 'S':
 	case 'D':
-		shoot(direction);
+		shoot(direction, map);
 		break;
 	//player movements
 	case 'w':
@@ -115,7 +137,6 @@ void playerMovement(char direction, int** map){
 	default:
 		puts("do not understand direction given");
 	}
-
 	map[playery][playerx] = PLAYER;
 	checkConsequences(map);
 	printMap(map);
@@ -204,11 +225,12 @@ void  INThandler(int sig) {
 
 void getKeyPress(int** map) {
 	char s;
+	int i;
 	char valid_directions[] = "wasdWASD";
 
 	s = getchar();
 
-	for (int i = 0; i < strlen(valid_directions); i++) {
+	for (i = 0; i < strlen(valid_directions); i++) {
 		if (s == valid_directions[i]) {
 			playerMovement(s, map);
 		}
@@ -217,13 +239,14 @@ void getKeyPress(int** map) {
 
 int main() {
 	int** arr = map();
-	// checkConsequences();
+
+	shoot('W', arr);
 	signal(SIGINT, INThandler);
     while (1) {
         getKeyPress(arr);
     }
     return 0;
-	
+
 	free(*arr);
 	free(arr);
 	return 0;
