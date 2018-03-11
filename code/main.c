@@ -23,8 +23,6 @@ int batx, baty;
 void INThandler(int);
 
 /*
-
-======timeless================
 void shoot()
 	if no hit wumpus then wumpus movement
 	if hit wumpus win
@@ -45,9 +43,17 @@ void win(){
 void shoot(){
 
 }
-void gameOver(){
-	puts("Game Over!");
-	//TODO: the stuff in main maybe move out the map to global
+void endGame(int condition){
+	switch (condition){
+	case 0:
+		puts("Game Over...");
+		break
+	case 1:
+		puts("YOU'VE WON!");
+		break;
+
+	}
+	//TODO: restart game?
 }
 
 void batAbduction(){
