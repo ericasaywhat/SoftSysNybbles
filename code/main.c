@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
+#include <signal.h>
 #include <time.h>
+#include <unistd.h>
 #include <assert.h>
 
 #define WIDTH 5
@@ -17,20 +20,23 @@ int pitx, pity;
 int wumx, wumy;
 int batx, baty;
 
+void INThandler(int);
+
 /*
-
-======timeless================
-
-void playerMovement()
-	if hit by wumpus game over
-	if abduct by bat rando movement
-	if fall in pit game over
 void shoot()
 	if no hit wumpus then wumpus movement
 	if hit wumpus win
 void wumpusMovement()
 void batAbduction()
 
+<<<<<<< HEAD
+=======
+
+wasd keys is movement
+WASD keys is shooting
+void gameOver()
+void win()
+>>>>>>> 5d7484ae8e0fa6ff1d0f6d232126605473a0974d
 */
 void wumpusMovement(){
 
@@ -185,6 +191,19 @@ int** map() {
 	printMap(map);
 
 	return map;
+}
+
+void  INThandler(int sig) {
+     char  c;
+
+     signal(sig, SIG_IGN);
+     printf("\nAre you sure you want to quit? [y/n] ");
+     c = getchar();
+     if (c == 'y' || c == 'Y')
+          exit(0);
+     else
+          signal(SIGINT, INThandler);
+     getchar(); // Get new line character
 }
 
 void getKeyPress() {
