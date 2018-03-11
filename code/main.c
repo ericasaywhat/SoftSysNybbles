@@ -36,11 +36,22 @@ typedef struct {
 
 
 void INThandler(int);
+void placeObject(int** map, int object);
+void printMap(int** map);
+void wumpusMovement(int** map);
 
 
+<<<<<<< HEAD
 void wumpusMovement(){
+=======
+<<<<<<< HEAD
 
-}
+wasd keys is movement
+WASD keys is shooting
+void gameOver()
+*/
+>>>>>>> 6e14695018a0f6821431f5154ed43b16fad93040
+
 void endGame(int condition){
 	switch (condition){
 	case 0:
@@ -54,36 +65,47 @@ void endGame(int condition){
 	//TODO: restart game?
 }
 
-void shoot(char direction){
+/*
+ * Abducts the player and moves them to a new blok.
+ */
+void batAbduction(int** map) {
+	map[playery][playerx] = 0;
+	placeObject(map, PLAYER);
+}
+
+void shoot(char direction, int** map){
 	switch(direction){
 	case 'W':
 		if(playery < wumy){  endGame(1);  }
-		else if(playery > wumy){  wumpusMovement();  }
+		else if(playery > wumy){  wumpusMovement(map);  }
 		break;
 	case 'S':
-		if(playery < wumy){  wumpusMovement();  }
+		if(playery < wumy){  wumpusMovement(map);  }
 		else if(playery > wumy){  endGame(1);  }
 		break;
 	case 'A':
 		if(playerx < wumx){  endGame(1);  }
-		else if(playerx > wumx){  wumpusMovement();  }
+		else if(playerx > wumx){  wumpusMovement(map);  }
 		break;
 	case 'D':
-		if(playerx < wumx){  wumpusMovement();  }
+		if(playerx < wumx){  wumpusMovement(map);  }
 		else if(playerx > wumx){  endGame(1);  }
 		break;
 
 	}
 }
 
-void batAbduction(){
-
+/*
+ * Moves the wumpus in a random direction.
+ */
+void wumpusMovement(int** map) {
+	map[wumy][wumx] = 0;
+	placeObject(map, WUM);
 }
 
-
-void checkConsequences(){
+void checkConsequences(int** map){
 	if((playerx==pitx && playery==pity) || (playerx==wumx && playery==wumy)){  endGame(0);  }
-	else if(playerx==batx && playery==baty){  batAbduction();  }
+	else if(playerx==batx && playery==baty){  batAbduction(map);  }
 	else {
 		if(playerx==wumx || playery==wumy){
 			puts("I hear the wumpus!");
@@ -101,14 +123,16 @@ void checkConsequences(){
 	// }
 }
 
-void playerMovement(char direction){
-	switch(direction){
+void playerMovement(char direction, int** map){
+	map[playery][playerx] = 0;
+
+	switch(direction) {
 	//player shooting
 	case 'W':
 	case 'A':
 	case 'S':
 	case 'D':
-		shoot(direction);
+		shoot(direction, map);
 		break;
 	//player movements
 	case 'w':
@@ -125,8 +149,10 @@ void playerMovement(char direction){
 		break;
 	default:
 		puts("do not understand direction given");
-
 	}
+	map[playery][playerx] = PLAYER;
+	checkConsequences(map);
+	printMap(map);
 }
 
 
@@ -210,7 +236,7 @@ void  INThandler(int sig) {
      getchar(); // Get new line character
 }
 
-void getKeyPress() {
+void getKeyPress(int** map) {
 	char s;
 	int i;
 	char valid_directions[] = "wasdWASD";
@@ -219,8 +245,7 @@ void getKeyPress() {
 
 	for (i = 0; i < strlen(valid_directions); i++) {
 		if (s == valid_directions[i]) {
-			playerMovement(s);
-			checkConsequences();
+			playerMovement(s, map);
 		}
 	}
 }
@@ -228,10 +253,10 @@ void getKeyPress() {
 int main() {
 	int** arr = map();
 
-	shoot('W');
+	shoot('W', arr);
 	signal(SIGINT, INThandler);
     while (1) {
-        getKeyPress();
+        getKeyPress(arr);
     }
     return 0;
 
