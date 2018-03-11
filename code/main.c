@@ -31,25 +31,15 @@ void shoot()
 void wumpusMovement()
 void batAbduction()
 
-
-ctrl + arrow/ wasd keys is movement
-alt + arrow/ wasd keys is shooting
-void gameOver()
-void win()
 */
-
-void win(){
-	puts("YOU'VE WON");
-}
-
-void shoot(){
+void wumpusMovement(){
 
 }
 void endGame(int condition){
 	switch (condition){
 	case 0:
 		puts("Game Over...");
-		break
+		break;
 	case 1:
 		puts("YOU'VE WON!");
 		break;
@@ -58,12 +48,31 @@ void endGame(int condition){
 	//TODO: restart game?
 }
 
+void shoot(char direction){
+	switch(direction){
+	case 'W':
+		if(playery < wumy){  endGame(1);  }
+		else if(playery > wumy){  wumpusMovement();  }
+	case 'S':
+		if(playery < wumy){  wumpusMovement();  }
+		else if(playery > wumy){  endGame(1);  }
+	case 'A':
+		if(playerx < wumx){  endGame(1);  }
+		else if(playerx > wumx){  wumpusMovement();  }
+	case 'D':
+		if(playerx < wumx){  wumpusMovement();  }
+		else if(playerx > wumx){  endGame(1);  }
+
+	}
+}
+
 void batAbduction(){
 
 }
 
+
 void checkConsequences(){
-	if((playerx==pitx && playery==pity) || (playerx==wumx && playery==wumy)){  gameOver();  }
+	if((playerx==pitx && playery==pity) || (playerx==wumx && playery==wumy)){  endGame(0);  }
 	else if(playerx==batx && playery==baty){  batAbduction();  }
 	else {
 		if(playerx==wumx || playery==wumy){
@@ -108,7 +117,6 @@ void playerMovement(char direction){
 		puts("do not understand direction given");
 
 	}
-	checkConsequences();
 }
 
 
@@ -181,26 +189,29 @@ int** map() {
 
 void getKeyPress() {
 	char s;
+	int i;
 	char valid_directions[] = "wasdWASD";
 
 	s = getchar();
 
-	for (int i = 0; i < strlen(valid_directions); i++) {
+	for (i = 0; i < strlen(valid_directions); i++) {
 		if (s == valid_directions[i]) {
 			playerMovement(s);
+			checkConsequences();
 		}
 	}
 }
 
 int main() {
 	int** arr = map();
-	// checkConsequences();
+
+	shoot('W');
 	signal(SIGINT, INThandler);
     while (1) {
         getKeyPress();
     }
     return 0;
-	
+
 	free(*arr);
 	free(arr);
 	return 0;
