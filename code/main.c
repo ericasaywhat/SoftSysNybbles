@@ -20,16 +20,24 @@ int pitx, pity;
 int wumx, wumy;
 int batx, baty;
 
+typedef struct {
+	int x;
+	int y;
+} Object;
+
+typedef struct {
+	int width;
+	int height;
+	Object player;
+	Object pit;
+	Object wumpus;
+	Object bats;
+} map;
+
+
 void INThandler(int);
 
-/*
-void shoot()
-	if no hit wumpus then wumpus movement
-	if hit wumpus win
-void wumpusMovement()
-void batAbduction()
 
-*/
 void wumpusMovement(){
 
 }
