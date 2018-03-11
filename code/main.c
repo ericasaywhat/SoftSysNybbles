@@ -21,6 +21,7 @@ int wumx, wumy;
 int batx, baty;
 
 void INThandler(int);
+void placeObject(int** map, int object);
 
 /*
 void shoot()
@@ -33,12 +34,7 @@ void batAbduction()
 wasd keys is movement
 WASD keys is shooting
 void gameOver()
-void win()
 */
-
-void win(){
-	puts("YOU'VE WON");
-}
 
 void shoot(){
 
@@ -47,7 +43,7 @@ void endGame(int condition){
 	switch (condition){
 	case 0:
 		puts("Game Over...");
-		break
+		break;
 	case 1:
 		puts("YOU'VE WON!");
 		break;
@@ -56,13 +52,25 @@ void endGame(int condition){
 	//TODO: restart game?
 }
 
-void batAbduction(){
-
+/*
+ * Abducts the player and moves them to a new blok.
+ */
+void batAbduction(int** map) {
+	map[playery][playerx] = 0;
+	placeObject(map, PLAYER);
 }
 
-void checkConsequences(){
-	if((playerx==pitx && playery==pity) || (playerx==wumx && playery==wumy)){  gameOver();  }
-	else if(playerx==batx && playery==baty){  batAbduction();  }
+/*
+ * Moves the wumpus in a random direction.
+ */
+void wumpusMovement(int** map) {
+	map[wumy][wumx] = 0;
+	placeObject(map, WUM);
+}
+
+void checkConsequences(int** map){
+	if((playerx==pitx && playery==pity) || (playerx==wumx && playery==wumy)){  endGame(0);  }
+	else if(playerx==batx && playery==baty){  batAbduction(map);  }
 	else {
 		if(playerx==wumx || playery==wumy){
 			puts("I hear the wumpus!");
@@ -80,8 +88,10 @@ void checkConsequences(){
 	// }
 }
 
-void playerMovement(char direction){
-	switch(direction){
+void playerMovement(char direction, int** map){
+	map[playery][playerx] = 0;
+
+	switch(direction) {
 	//player shooting
 	case 'W':
 	case 'A':
@@ -104,9 +114,11 @@ void playerMovement(char direction){
 		break;
 	default:
 		puts("do not understand direction given");
-
 	}
-	checkConsequences();
+
+	map[playery][playerx] = PLAYER;
+	checkConsequences(map);
+	printMap(map);
 }
 
 
@@ -190,7 +202,7 @@ void  INThandler(int sig) {
      getchar(); // Get new line character
 }
 
-void getKeyPress() {
+void getKeyPress(int** map) {
 	char s;
 	char valid_directions[] = "wasdWASD";
 
@@ -198,7 +210,7 @@ void getKeyPress() {
 
 	for (int i = 0; i < strlen(valid_directions); i++) {
 		if (s == valid_directions[i]) {
-			playerMovement(s);
+			playerMovement(s, map);
 		}
 	}
 }
@@ -208,7 +220,7 @@ int main() {
 	// checkConsequences();
 	signal(SIGINT, INThandler);
     while (1) {
-        getKeyPress();
+        getKeyPress(arr);
     }
     return 0;
 	
