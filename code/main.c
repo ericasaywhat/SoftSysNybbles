@@ -28,29 +28,65 @@ typedef struct {
 typedef struct {
 	int width;
 	int height;
-	Object player;
-	Object pit;
-	Object wumpus;
-	Object bats;
-} map;
+	Object* player;
+	Object* pit;
+	Object* wum;
+	Object* bat;
+	int** coords;
+} Map;
 
-
+Map* map;
 void INThandler(int);
-void placeObject(int** map, int object);
-void printMap(int** map);
-void wumpusMovement(int** map);
+void placeObject(Object* obj, int id);
+void printMap();
+void wumpusMovement();
+int** coords();
+void batAbduction();
+
+Object* make_object(int identity){
+	Object* obj = malloc(sizeof(Object));
+	placeObject(obj, identity);
+	return obj;
+}
+
+Map* make_map(){
+	map = malloc(sizeof(Map));
+	map->width = 5;
+	map->height = 5;
+	map->coords = coords();
+	Object* player = make_object(PLAYER);
+	Object* pit = make_object(PIT);
+	Object* wum = make_object(WUM);
+	Object* bat = make_object(BAT);
+
+	map->player = player;
+	map->pit = pit;
+	map->wum = wum;
+	map->bat = bat;
 
 
-<<<<<<< HEAD
-void wumpusMovement(){
-=======
-<<<<<<< HEAD
+	placeObject(map->pit, PIT);
+	placeObject(map->bat, BAT);
+	placeObject(map->wum, WUM);
+	placeObject(map->player, PLAYER);
+	printMap();
 
-wasd keys is movement
-WASD keys is shooting
-void gameOver()
-*/
->>>>>>> 6e14695018a0f6821431f5154ed43b16fad93040
+	return map;
+}
+
+int** coords() {
+	int i, j;
+
+	int** coords = malloc(HEIGHT * WIDTH * sizeof(int*));
+
+	for(i=0; i<HEIGHT; i++) {
+		int* values = calloc(WIDTH*HEIGHT, sizeof(int));
+		coords[i] = values;
+	}
+
+
+	return coords;
+}
 
 void endGame(int condition){
 	switch (condition){
@@ -65,31 +101,23 @@ void endGame(int condition){
 	//TODO: restart game?
 }
 
-/*
- * Abducts the player and moves them to a new blok.
- */
-void batAbduction(int** map) {
-	map[playery][playerx] = 0;
-	placeObject(map, PLAYER);
-}
-
-void shoot(char direction, int** map){
+void shoot(char direction){
 	switch(direction){
 	case 'W':
-		if(playery < wumy){  endGame(1);  }
-		else if(playery > wumy){  wumpusMovement(map);  }
+		if(map->player->y < map->wum->y){  endGame(1);  }
+		else if(map->player->y > map->wum->y){  wumpusMovement();  }
 		break;
 	case 'S':
-		if(playery < wumy){  wumpusMovement(map);  }
-		else if(playery > wumy){  endGame(1);  }
+		if(map->player->y < map->wum->y){  wumpusMovement();  }
+		else if(map->player->y > map->wum->y){  endGame(1);  }
 		break;
 	case 'A':
-		if(playerx < wumx){  endGame(1);  }
-		else if(playerx > wumx){  wumpusMovement(map);  }
+		if(map->player->x < map->wum->x){  endGame(1);  }
+		else if(map->player->x > map->wum->x){  wumpusMovement();  }
 		break;
 	case 'D':
-		if(playerx < wumx){  wumpusMovement(map);  }
-		else if(playerx > wumx){  endGame(1);  }
+		if(map->player->x < map->wum->x){  wumpusMovement();  }
+		else if(map->player->x > map->wum->x){  endGame(1);  }
 		break;
 
 	}
@@ -98,22 +126,23 @@ void shoot(char direction, int** map){
 /*
  * Moves the wumpus in a random direction.
  */
-void wumpusMovement(int** map) {
-	map[wumy][wumx] = 0;
-	placeObject(map, WUM);
+void wumpusMovement() {
+	map->coords[map->wum->y][map->wum->x] = 0;
+	placeObject(map->wum, WUM);
 }
 
-void checkConsequences(int** map){
-	if((playerx==pitx && playery==pity) || (playerx==wumx && playery==wumy)){  endGame(0);  }
-	else if(playerx==batx && playery==baty){  batAbduction(map);  }
+void checkConsequences(){
+	if((map->player->x==map->pit->x && map->player->y==map->pit->y) ||
+		(map->player->x==map->wum->x && map->player->y==map->wum->y)){  endGame(0);  }
+	else if(map->player->x==map->bat->x && map->player->y==map->bat->y){  batAbduction();  }
 	else {
-		if(playerx==wumx || playery==wumy){
+		if(map->player->x==map->wum->x || map->player->y==map->wum->y){
 			puts("I hear the wumpus!");
 		}
-		if(playerx==pitx || playery==pity){
+		if(map->player->x==map->pit->x || map->player->y==map->pit->y){
 			puts("There is imminent danger...");
 		}
-		if(playerx==batx || playery==baty){
+		if(map->player->x==map->bat->x || map->player->y==map->bat->y){
 			puts("I hear the flapping of wings");
 		}
 	}
@@ -123,8 +152,8 @@ void checkConsequences(int** map){
 	// }
 }
 
-void playerMovement(char direction, int** map){
-	map[playery][playerx] = 0;
+void playerMovement(char direction){
+	map->coords[map->player->y][map->player->x] = 0;
 
 	switch(direction) {
 	//player shooting
@@ -132,98 +161,73 @@ void playerMovement(char direction, int** map){
 	case 'A':
 	case 'S':
 	case 'D':
-		shoot(direction, map);
+		shoot(direction);
 		break;
 	//player movements
 	case 'w':
-		playery--;
+		map->player->y--;
 		break;
 	case 'a':
-		playerx--;
+		map->player->x--;
 		break;
 	case 's':
-		playery++;
+		map->player->y++;
 		break;
 	case 'd':
-		playerx++;
+		map->player->x++;
 		break;
 	default:
 		puts("do not understand direction given");
 	}
-	map[playery][playerx] = PLAYER;
+	map->coords[map->player->y][map->player->x] = PLAYER;
 	checkConsequences(map);
 	printMap(map);
 }
 
 
 
-void printMap(int** map) {
+void printMap() {
 	int i, j;
 
 	for (i=0; i<5; i++){
 		for (j=0; j<5; j++) {
-			printf("%i ", map[i][j]);
+			printf("%i ", map->coords[i][j]);
 		}
 		puts("\n");
 	}
 }
 
-void placeObject(int** map, int object) {
-	int x = rand()%WIDTH;
-	int y = rand()%HEIGHT;
-	while (map[y][x] != 0) {
-		puts("repetition");
-		x = rand()%WIDTH;
-		y = rand()%HEIGHT;
-	}
-
-	switch(object) {
-	case PLAYER:
-		playerx = x;
-		playery = y;
-		break;
-	case BAT:
-		batx = x;
-		baty = y;
-		break;
-	case PIT:
-		pitx = x;
-		pity = y;
-		break;
-	case WUM:
-		wumx = x;
-		wumy = y;
-		break;
-	default:
-		puts("do not recognize object to be placed");
-	}
-
-	map[y][x] = object;
-}
-
-int** map() {
-	int i, j;
-
-	int** map = malloc(HEIGHT * sizeof(int*));
-
-	for(i=0; i<WIDTH; i++) {
-		int* values = calloc(WIDTH*HEIGHT, sizeof(int));
-		map[i] = values;
-	}
-
+void placeObject(Object* object, int identity) {
 	time_t t;
 	srand((unsigned) time(&t));
 
-	placeObject(map, PIT);
-	placeObject(map, BAT);
-	placeObject(map, WUM);
-	placeObject(map, PLAYER);
-	printMap(map);
+	int x = rand()%map->width;
+	int y = rand()%map->height;
+	while (map->coords[y][x] != 0) {
+		x = rand()%map->width;
+		y = rand()%map->height;
+	}
 
-	return map;
+	object->x = x;
+	object->y = y;
+
+	map->coords[y][x] = identity;
 }
 
-void  INThandler(int sig) {
+
+
+void free_objects(){
+	free(map->player);
+	free(map->bat);
+	free(map->pit);
+	free(map->wum);
+}
+
+void free_map(){
+	free(map);
+}
+
+void INThandler(int sig) {
      char  c;
 
      signal(sig, SIG_IGN);
@@ -236,7 +240,7 @@ void  INThandler(int sig) {
      getchar(); // Get new line character
 }
 
-void getKeyPress(int** map) {
+void getKeyPress() {
 	char s;
 	int i;
 	char valid_directions[] = "wasdWASD";
@@ -245,22 +249,30 @@ void getKeyPress(int** map) {
 
 	for (i = 0; i < strlen(valid_directions); i++) {
 		if (s == valid_directions[i]) {
-			playerMovement(s, map);
+			playerMovement(s);
 		}
 	}
 }
 
-int main() {
-	int** arr = map();
+/*
+ * Abducts the player and moves them to a new blok.
+ */
+void batAbduction() {
+	map->coords[map->player->y][map->player->x] = 0;
+	placeObject(map->player, PLAYER);
+}
 
-	shoot('W', arr);
+int main() {
+	make_map();
+	// int** arr = coords();
+
+	shoot('W');
 	signal(SIGINT, INThandler);
     while (1) {
-        getKeyPress(arr);
+        getKeyPress();
     }
-    return 0;
 
-	free(*arr);
-	free(arr);
+	// free(*arr);
+	// free(arr);
 	return 0;
 }
