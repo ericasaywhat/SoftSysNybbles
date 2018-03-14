@@ -43,9 +43,8 @@ void wumpusMovement();
 int** coords();
 void batAbduction();
 
-Object* make_object(int identity){
+Object* make_object(){
 	Object* obj = malloc(sizeof(Object));
-	placeObject(obj, identity);
 	return obj;
 }
 
@@ -54,10 +53,10 @@ Map* make_map(){
 	map->width = 5;
 	map->height = 5;
 	map->coords = coords();
-	Object* player = make_object(PLAYER);
-	Object* pit = make_object(PIT);
-	Object* wum = make_object(WUM);
-	Object* bat = make_object(BAT);
+	Object* player = make_object();
+	Object* pit = make_object();
+	Object* wum = make_object();
+	Object* bat = make_object();
 
 	map->player = player;
 	map->pit = pit;
@@ -104,20 +103,20 @@ void endGame(int condition){
 void shoot(char direction){
 	switch(direction){
 	case 'W':
-		if(map->player->y < map->wum->y){  endGame(1);  }
-		else if(map->player->y > map->wum->y){  wumpusMovement();  }
+		if(map->player->y > map->wum->y){  endGame(1);  }
+		else if(map->player->y < map->wum->y){  wumpusMovement();  }
 		break;
 	case 'S':
-		if(map->player->y < map->wum->y){  wumpusMovement();  }
-		else if(map->player->y > map->wum->y){  endGame(1);  }
+		if(map->player->y > map->wum->y){  wumpusMovement();  }
+		else if(map->player->y < map->wum->y){  endGame(1);  }
 		break;
 	case 'A':
-		if(map->player->x < map->wum->x){  endGame(1);  }
-		else if(map->player->x > map->wum->x){  wumpusMovement();  }
+		if(map->player->x > map->wum->x){  endGame(1);  }
+		else if(map->player->x < map->wum->x){  wumpusMovement();  }
 		break;
 	case 'D':
-		if(map->player->x < map->wum->x){  wumpusMovement();  }
-		else if(map->player->x > map->wum->x){  endGame(1);  }
+		if(map->player->x > map->wum->x){  wumpusMovement();  }
+		else if(map->player->x < map->wum->x){  endGame(1);  }
 		break;
 
 	}
