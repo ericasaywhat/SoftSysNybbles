@@ -25,9 +25,14 @@ Map* make_map(){
 	placeObject(map->bat, BAT);
 	placeObject(map->wum, WUM);
 	placeObject(map->player, PLAYER);
+	whereisPlayer();
 	printMap();
 
 	return map;
+}
+
+void whereisPlayer() {
+	printf("You are at %i,%i.\n", map->player->x, map->player->y);
 }
 
 int** coords() {
@@ -90,11 +95,10 @@ void shoot(char direction){
 				break;
 		}
 
-		printf("Successfully shot an arrow in direction %c. Arrows remaining: %i\n",
+		printf("You successfully shot an arrow in direction %c. Arrows remaining: %i.\n",
 			direction, map->numArrows);
 
 		if (map->numArrows == 0) {
-			puts("Oh, sounds like somebody dropped an arrow somewhere on the map...");
 			placeArrow();
 		}
 	}
@@ -128,13 +132,13 @@ void checkConsequences(){
 	else if(map->player->x==map->bat->x && map->player->y==map->bat->y){  batAbduction();  }
 	else {
 		if(map->player->x==map->wum->x || map->player->y==map->wum->y){
-			puts("I hear the wumpus!");
+			puts("You smell a wumpus! Proceed with caution...");
 		}
 		if(map->player->x==map->pit->x || map->player->y==map->pit->y){
-			puts("There is imminent danger...");
+			puts("You feel a breeze nearby. Watch your step...");
 		}
 		if(map->player->x==map->bat->x || map->player->y==map->bat->y){
-			puts("I hear the flapping of wings");
+			puts("You hear flapping nearby. Wonder what's making that sound?");
 		}
 	}
 
@@ -194,6 +198,7 @@ void playerMovement(char direction){
 			}
 			map->coords[map->player->y][map->player->x] = PLAYER;
 			checkConsequences(map);
+			whereisPlayer();
 			printMap(map);
 		} else {
 			printf("You could not move in direction: %c. Please try again.\n", direction);
