@@ -94,9 +94,24 @@ void shoot(char direction){
 			direction, map->numArrows);
 
 		if (map->numArrows == 0) {
-			placeObject(NULL, ARROW);
+			puts("Oh, sounds like somebody dropped an arrow somewhere on the map...");
+			placeArrow();
 		}
 	}
+}
+
+void placeArrow() {
+	time_t t;
+	srand((unsigned) time(&t));
+
+	int x = rand()%map->width;
+	int y = rand()%map->height;
+	while (map->coords[y][x] != 0) {
+		x = rand()%map->width;
+		y = rand()%map->height;
+	}
+
+	map->coords[y][x] = ARROW;
 }
 
 /*
@@ -173,6 +188,10 @@ void playerMovement(char direction){
 		break;
 	default:
 		if (playerCanMove(direction) && moveSuccessful(direction)) {
+			if (map->coords[map->player->y][map->player->x] == ARROW) {
+				map->numArrows++;
+				printf("You found an arrow! Arrows remaining: %i.\n", map->numArrows);
+			}
 			map->coords[map->player->y][map->player->x] = PLAYER;
 			checkConsequences(map);
 			printMap(map);
