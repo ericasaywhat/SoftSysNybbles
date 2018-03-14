@@ -115,9 +115,41 @@ void checkConsequences(){
 	// }
 }
 
-void playerMovement(char direction){
-	map->coords[map->player->y][map->player->x] = 0;
+bool playerCanMove(char direction) {
+	if ((direction == 'a' && map->player->x == 0) || 
+		(direction == 'd' && map->player->x == WIDTH-1) ||
+		(direction == 's' && map->player->y == HEIGHT-1) |
+		(direction == 'w' && map->player->y == 0) ||
+		(direction != 'a' && direction != 'w' &&
+			direction != 's' && direction != 'd')) {
+		return false;
+	} else {
+		return true;
+	}
+}
 
+bool moveSuccessful(char direction) {
+	map->coords[map->player->y][map->player->x] = 0;
+	switch (direction) {
+		case 'w':
+			map->player->y--;
+			break;
+		case 'a':
+			map->player->x--;
+			break;
+		case 's':
+			map->player->y++;
+			break;
+		case 'd':
+			map->player->x++;
+			break;
+		default:
+			return false;
+	}
+	return true;
+}
+
+void playerMovement(char direction){
 	switch(direction) {
 	//player shooting
 	case 'W':
@@ -126,28 +158,17 @@ void playerMovement(char direction){
 	case 'D':
 		shoot(direction);
 		break;
-	//player movements
-	case 'w':
-		map->player->y--;
-		break;
-	case 'a':
-		map->player->x--;
-		break;
-	case 's':
-		map->player->y++;
-		break;
-	case 'd':
-		map->player->x++;
-		break;
 	default:
-		puts("do not understand direction given");
+		if (playerCanMove(direction) && moveSuccessful(direction)) {
+			map->coords[map->player->y][map->player->x] = PLAYER;
+			checkConsequences(map);
+			printMap(map);
+		} else {
+			printf("You could not move in direction: %c. Please try again.\n", direction);
+			printMap(map);
+		}
 	}
-	map->coords[map->player->y][map->player->x] = PLAYER;
-	checkConsequences(map);
-	printMap(map);
 }
-
-
 
 void printMap() {
 	int i, j;
