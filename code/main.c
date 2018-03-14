@@ -20,7 +20,6 @@ Map* make_map(){
 	map->wum = wum;
 	map->bat = bat;
 
-
 	placeObject(map->pit, PIT);
 	placeObject(map->bat, BAT);
 	placeObject(map->wum, WUM);
@@ -32,29 +31,28 @@ Map* make_map(){
 
 int** coords() {
 	int i, j;
-
 	int** coords = malloc(HEIGHT * WIDTH * sizeof(int*));
 
 	for(i=0; i<HEIGHT; i++) {
 		int* values = calloc(WIDTH*HEIGHT, sizeof(int));
 		coords[i] = values;
 	}
-
-
 	return coords;
 }
 
 void endGame(int condition){
+    char c;
+
 	switch (condition){
 	case 0:
 		puts("Game Over...");
+		game_over = 0;
 		break;
 	case 1:
 		puts("YOU'VE WON!");
+		game_over = 0;
 		break;
-
 	}
-	//TODO: restart game?
 }
 
 void shoot(char direction){
@@ -92,13 +90,13 @@ void checkConsequences(){
 		(map->player->x==map->wum->x && map->player->y==map->wum->y)){  endGame(0);  }
 	else if(map->player->x==map->bat->x && map->player->y==map->bat->y){  batAbduction();  }
 	else {
-		if(map->player->x==map->wum->x || map->player->y==map->wum->y){
+		if(!game_over && map->player->x==map->wum->x || map->player->y==map->wum->y){
 			puts("I hear the wumpus!");
 		}
-		if(map->player->x==map->pit->x || map->player->y==map->pit->y){
+		if(!game_over && map->player->x==map->pit->x || map->player->y==map->pit->y){
 			puts("There is imminent danger...");
 		}
-		if(map->player->x==map->bat->x || map->player->y==map->bat->y){
+		if(!game_over && map->player->x==map->bat->x || map->player->y==map->bat->y){
 			puts("I hear the flapping of wings");
 		}
 	}
@@ -136,7 +134,9 @@ void playerMovement(char direction){
 		puts("do not understand direction given");
 	}
 	map->coords[map->player->y][map->player->x] = PLAYER;
-	checkConsequences(map);
+	if(game_over){
+		checkConsequences(map);
+	}
 	printMap(map);
 }
 
@@ -189,10 +189,12 @@ void INThandler(int sig) {
      signal(sig, SIG_IGN);
      printf("\nAre you sure you want to quit? [y/n] ");
      c = getchar();
-     if (c == 'y' || c == 'Y')
+     if (c == 'y' || c == 'Y'){
           exit(0);
-     else
+     }
+     else{
           signal(SIGINT, INThandler);
+     }
      getchar(); // Get new line character
 }
 
@@ -218,17 +220,16 @@ void batAbduction() {
 	placeObject(map->player, PLAYER);
 }
 
-int main() {
+void playGame(){
 	make_map();
-	// int** arr = coords();
-
-	shoot('W');
 	signal(SIGINT, INThandler);
     while (1) {
         getKeyPress();
     }
+}
 
-	// free(*arr);
-	// free(arr);
+int main() {
+	game_over = 1;
+	playGame();
 	return 0;
 }

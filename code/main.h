@@ -36,7 +36,9 @@ typedef struct {
 } Map;
 
 Map* map;
+int game_over;
 
+void playGame();
 void INThandler(int);
 Object* make_object();
 Map* make_map();
