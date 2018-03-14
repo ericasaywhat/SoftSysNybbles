@@ -28,10 +28,13 @@ typedef struct {
 typedef struct {
 	int width;
 	int height;
+	int numArrows;
+
 	Object* player;
 	Object* pit;
 	Object* wum;
 	Object* bat;
+
 	int** coords;
 } Map;
 
@@ -52,6 +55,7 @@ Map* make_map(){
 	map = malloc(sizeof(Map));
 	map->width = 5;
 	map->height = 5;
+	map->numArrows = 5;
 	map->coords = coords();
 	Object* player = make_object();
 	Object* pit = make_object();
@@ -62,7 +66,6 @@ Map* make_map(){
 	map->pit = pit;
 	map->wum = wum;
 	map->bat = bat;
-
 
 	placeObject(map->pit, PIT);
 	placeObject(map->bat, BAT);
@@ -101,24 +104,31 @@ void endGame(int condition){
 }
 
 void shoot(char direction){
-	switch(direction){
-	case 'W':
-		if(map->player->y > map->wum->y){  endGame(1);  }
-		else if(map->player->y < map->wum->y){  wumpusMovement();  }
-		break;
-	case 'S':
-		if(map->player->y > map->wum->y){  wumpusMovement();  }
-		else if(map->player->y < map->wum->y){  endGame(1);  }
-		break;
-	case 'A':
-		if(map->player->x > map->wum->x){  endGame(1);  }
-		else if(map->player->x < map->wum->x){  wumpusMovement();  }
-		break;
-	case 'D':
-		if(map->player->x > map->wum->x){  wumpusMovement();  }
-		else if(map->player->x < map->wum->x){  endGame(1);  }
-		break;
+	if (map->numArrows == 0) {
+		puts("You are out of arrows! Try walking around to find more.");
+	} else {
+		map->numArrows--;
 
+		switch(direction) {
+			case 'W':
+				if(map->player->y < map->wum->y){  endGame(1); puts("WAH"); }
+				else if(map->player->y > map->wum->y){  wumpusMovement();  }
+				break;
+			case 'S':
+				if(map->player->y < map->wum->y){  wumpusMovement();  }
+				else if(map->player->y > map->wum->y){  endGame(1); puts("NYA"); }
+				break;
+			case 'A':
+				if(map->player->x < map->wum->x){  endGame(1); puts("KWA");  }
+				else if(map->player->x > map->wum->x){  wumpusMovement();  }
+				break;
+			case 'D':
+				if(map->player->x < map->wum->x){  wumpusMovement();  }
+				else if(map->player->x > map->wum->x){  endGame(1); puts("FWA"); }
+				break;
+		}
+
+		printf("Successfully shot an arrow in direction %c. Arrows remaining: %i\n", direction, map->numArrows);
 	}
 }
 
