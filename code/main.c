@@ -43,9 +43,8 @@ void wumpusMovement();
 int** coords();
 void batAbduction();
 
-Object* make_object(int identity){
+Object* make_object(){
 	Object* obj = malloc(sizeof(Object));
-	placeObject(obj, identity);
 	return obj;
 }
 
@@ -54,10 +53,10 @@ Map* make_map(){
 	map->width = 5;
 	map->height = 5;
 	map->coords = coords();
-	Object* player = make_object(PLAYER);
-	Object* pit = make_object(PIT);
-	Object* wum = make_object(WUM);
-	Object* bat = make_object(BAT);
+	Object* player = make_object();
+	Object* pit = make_object();
+	Object* wum = make_object();
+	Object* bat = make_object();
 
 	map->player = player;
 	map->pit = pit;
@@ -266,7 +265,6 @@ int main() {
 	make_map();
 	// int** arr = coords();
 
-	shoot('W');
 	signal(SIGINT, INThandler);
     while (1) {
         getKeyPress();
