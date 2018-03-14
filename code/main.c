@@ -103,20 +103,20 @@ void endGame(int condition){
 void shoot(char direction){
 	switch(direction){
 	case 'W':
-		if(map->player->y < map->wum->y){  endGame(1);  }
-		else if(map->player->y > map->wum->y){  wumpusMovement();  }
+		if(map->player->y > map->wum->y){  endGame(1);  }
+		else if(map->player->y < map->wum->y){  wumpusMovement();  }
 		break;
 	case 'S':
-		if(map->player->y < map->wum->y){  wumpusMovement();  }
-		else if(map->player->y > map->wum->y){  endGame(1);  }
+		if(map->player->y > map->wum->y){  wumpusMovement();  }
+		else if(map->player->y < map->wum->y){  endGame(1);  }
 		break;
 	case 'A':
-		if(map->player->x < map->wum->x){  endGame(1);  }
-		else if(map->player->x > map->wum->x){  wumpusMovement();  }
+		if(map->player->x > map->wum->x){  endGame(1);  }
+		else if(map->player->x < map->wum->x){  wumpusMovement();  }
 		break;
 	case 'D':
-		if(map->player->x < map->wum->x){  wumpusMovement();  }
-		else if(map->player->x > map->wum->x){  endGame(1);  }
+		if(map->player->x > map->wum->x){  wumpusMovement();  }
+		else if(map->player->x < map->wum->x){  endGame(1);  }
 		break;
 
 	}
