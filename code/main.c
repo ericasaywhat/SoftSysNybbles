@@ -210,7 +210,7 @@ int** map() {
 	return map;
 }
 
-void  INThandler(int sig) {
+void INThandler(int sig) {
      char  c;
 
      signal(sig, SIG_IGN);
