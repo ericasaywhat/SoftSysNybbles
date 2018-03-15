@@ -1,3 +1,15 @@
+/*
+ * HUNT THE WUMPUS!
+ * A Software Systems Spring 2018 project by Erica Lee ('19) and Emily Yeh ('19)
+ * with some help from James (Zhecan) Wang ('18).
+ * 
+ * This game is meant to be as similar as possible to the official Hunt the Wumpus
+ * game invented by Gregory Yob, although we did not implement the squashed
+ * dodecahedron map and instead opted for a 5x5 square map.
+ * 
+ * We hope this game is as fun for others as it was for us to create.
+ */
+
 #include "main.h"
 
 /*
