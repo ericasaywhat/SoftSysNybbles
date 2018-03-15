@@ -161,24 +161,34 @@ void wumpusMovement() {
 }
 
 void checkConsequences(){
-	if((map->player->x==map->pit->x && map->player->y==map->pit->y) ||
-		(map->player->x==map->wum->x && map->player->y==map->wum->y)){  endGame(0);  }
-	else if(map->player->x==map->bat->x && map->player->y==map->bat->y){  batAbduction();  }
-	else {
-		if(map->player->x==map->wum->x || map->player->y==map->wum->y){
+	if ((map->player->x==map->pit->x &&
+		map->player->y==map->pit->y) ||
+		(map->player->x==map->wum->x &&
+		map->player->y==map->wum->y)) { 
+		endGame(0); 
+	} else if (map->player->x==map->bat->x &&
+		map->player->y==map->bat->y) {
+		batAbduction();
+	} else {
+		if ((map->player->x + 1 == map->wum->x && map->player->y == map->wum->y) ||
+			(map->player->x - 1 == map->wum->x && map->player->y == map->wum->y) || 
+			(map->player->y + 1 == map->wum->y && map->player->x == map->wum->x) ||
+			(map->player->y - 1 == map->wum->y && map->player->x == map->wum->x)) {
 			puts("You smell a wumpus! Proceed with caution...");
 		}
-		if(map->player->x==map->pit->x || map->player->y==map->pit->y){
+		if ((map->player->x + 1 == map->pit->x && map->player->y == map->pit->y) ||
+			(map->player->x - 1 == map->pit->x && map->player->y == map->pit->y) || 
+			(map->player->y + 1 == map->pit->y && map->player->x == map->pit->x) ||
+			(map->player->y - 1 == map->pit->y && map->player->x == map->pit->x)) {
 			puts("You feel a breeze nearby. Watch your step...");
 		}
-		if(map->player->x==map->bat->x || map->player->y==map->bat->y){
+		if ((map->player->x + 1 == map->bat->x && map->player->y == map->bat->y) ||
+			(map->player->x - 1 == map->bat->x && map->player->y == map->bat->y) || 
+			(map->player->y + 1 == map->bat->y && map->player->x == map->bat->x) ||
+			(map->player->y - 1 == map->bat->y && map->player->x == map->bat->x)) {
 			puts("You hear flapping nearby. Wonder what's making that sound?");
 		}
 	}
-
-	// default:
-	// 	puts("I don't feel anything.");
-	// }
 }
 
 bool playerCanMove(char direction) {
