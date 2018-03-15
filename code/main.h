@@ -1,11 +1,13 @@
+#include <assert.h>
+#include <errno.h>  
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 #include <signal.h>
+#include <termios.h>  
 #include <time.h>
 #include <unistd.h>
-#include <assert.h>
 
 #define WIDTH 5
 #define HEIGHT 5
@@ -16,10 +18,14 @@
 #define ARROW 4
 #define PLAYER 5
 
-int playerx, playery;
-int pitx, pity;
-int wumx, wumy;
-int batx, baty;
+#define PITDEATH 0
+#define WUMDEATH 1
+#define PLAYERWIN 2
+
+int kills;
+int deaths;
+bool game_over;
+bool want_to_play;
 
 typedef struct {
 	int x;
@@ -38,13 +44,12 @@ typedef struct {
 } Map;
 
 Map* map;
-int game_over;
 
-void playGame();
-void INThandler(int);
 Object* make_object();
 Map* make_map();
 int** coords();
+void playGame();
+void INThandler(int);
 void endGame(int condition);
 void shoot(char direction);
 void wumpusMovement();
@@ -59,3 +64,4 @@ void getKeyPress();
 void batAbduction();
 void placeArrow();
 void whereisPlayer();
+void printMaskedMap();
