@@ -1,16 +1,6 @@
 #include "main.h"
 
 /*
- * Allocates space to an Object and returns a pointer to the Object.
- * 
- * return: pointer to newly created Object
- */
-Object* make_object(){
-	Object* obj = malloc(sizeof(Object));
-	return obj;
-}
-
-/*
  * Creates the game Map, including placing Objects on the Map.
  * Initializes locations of the player, the pit, the Wumpus, and the bats.
  * 
@@ -43,11 +33,36 @@ Map* make_map(){
 }
 
 /*
- * Prints the location of the player.
- * Player location goes left to right and top to bottom.
+ * Allocates space to an Object and returns a pointer to the Object.
+ * 
+ * return: pointer to newly created Object
  */
-void whereisPlayer() {
-	printf("You are at %i,%i.\n", map->player->x, map->player->y);
+Object* make_object(){
+	Object* obj = malloc(sizeof(Object));
+	return obj;
+}
+
+/*
+ * Places an object on the map.
+ * 
+ * object: Object to be placed
+ * identity: ID of the object to be placed
+ */
+void placeObject(Object* object, int identity) {
+	time_t t;
+	srand((unsigned) time(&t));
+
+	int x = rand()%map->width;
+	int y = rand()%map->height;
+	while (map->coords[y][x] != 0) {
+		x = rand()%map->width;
+		y = rand()%map->height;
+	}
+
+	object->x = x;
+	object->y = y;
+
+	map->coords[y][x] = identity;
 }
 
 /*
@@ -67,29 +82,80 @@ int** coords() {
 }
 
 /*
- * Ends the game and prints the appropriate statement.
+ * Allows the player to shoot or move in a given direction.
  * 
- * condition: 0 if player lost, 1 if player won
+ * direction: char direction to shoot or move in
  */
-void endGame(int condition){
-    char c;
-
-	switch (condition){
-	case WUMDEATH:
-		puts("Game Over... The Wumpus got you.");
-		deaths++;
+void playerMovement(char direction){
+	switch(direction) {
+	//player shooting
+	case 'W':
+	case 'A':
+	case 'S':
+	case 'D':
+		shoot(direction);
 		break;
-	case PITDEATH:
-		puts("Game Over... You fell down a pit!");
-		deaths++;
-		break;
-	case PLAYERWIN:
-		puts("You killed the Wumpus! Congratulations!");
-		kills++;
-		break;
+	default:
+		if (playerCanMove(direction) && moveSuccessful(direction)) {
+			if (map->coords[map->player->y][map->player->x] == ARROW) {
+				map->numArrows++;
+				printf("You found an arrow! Arrows remaining: %i.\n", map->numArrows);
+			}
+			map->coords[map->player->y][map->player->x] = PLAYER;
+			checkConsequences();
+			if (!game_over) {
+				whereisPlayer();
+				printMaskedMap();
+			}
+		} else {
+			printf("You could not move in direction: %c. Please try again.\n", direction);
+			printMaskedMap();
+		}
 	}
+}
 
-	game_over = true;
+/*
+ * Determines whether it's possible for the player to move in the given direction.
+ * 
+ * direction: char direction the player wants to move in
+ */
+bool playerCanMove(char direction) {
+	if ((direction == 'a' && map->player->x == 0) ||
+		(direction == 'd' && map->player->x == WIDTH-1) ||
+		(direction == 's' && map->player->y == HEIGHT-1) |
+		(direction == 'w' && map->player->y == 0) ||
+		(direction != 'a' && direction != 'w' &&
+			direction != 's' && direction != 'd')) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+/*
+ * Moves the player.
+ * 
+ * direction: char direction to move the player in
+ */
+bool moveSuccessful(char direction) {
+	map->coords[map->player->y][map->player->x] = 0;
+	switch (direction) {
+		case 'w':
+			map->player->y--;
+			break;
+		case 'a':
+			map->player->x--;
+			break;
+		case 's':
+			map->player->y++;
+			break;
+		case 'd':
+			map->player->x++;
+			break;
+		default:
+			return false;
+	}
+	return true;
 }
 
 /*
@@ -153,31 +219,6 @@ void shoot(char direction){
 	}
 }
 
-/*
- * Places an arrow at a random location in the map.
- */
-void placeArrow() {
-	time_t t;
-	srand((unsigned) time(&t));
-
-	int x = rand()%map->width;
-	int y = rand()%map->height;
-	while (map->coords[y][x] != 0) {
-		x = rand()%map->width;
-		y = rand()%map->height;
-	}
-
-	map->coords[y][x] = ARROW;
-}
-
-/*
- * Moves the Wumpus in a random direction.
- */
-void wumpusMovement() {
-	puts("You scared the Wumpus! You hear it running away to another part of the map...");
-	map->coords[map->wum->y][map->wum->x] = 0;
-	placeObject(map->wum, WUM);
-}
 
 /*
  * Checks consequences of the player's location.
@@ -228,80 +269,72 @@ void checkConsequences(){
 }
 
 /*
- * Determines whether it's possible for the player to move in the given direction.
- * 
- * direction: char direction the player wants to move in
+ * Places an arrow at a random location in the map.
  */
-bool playerCanMove(char direction) {
-	if ((direction == 'a' && map->player->x == 0) ||
-		(direction == 'd' && map->player->x == WIDTH-1) ||
-		(direction == 's' && map->player->y == HEIGHT-1) |
-		(direction == 'w' && map->player->y == 0) ||
-		(direction != 'a' && direction != 'w' &&
-			direction != 's' && direction != 'd')) {
-		return false;
-	} else {
-		return true;
+void placeArrow() {
+	time_t t;
+	srand((unsigned) time(&t));
+
+	int x = rand()%map->width;
+	int y = rand()%map->height;
+	while (map->coords[y][x] != 0) {
+		x = rand()%map->width;
+		y = rand()%map->height;
 	}
+
+	map->coords[y][x] = ARROW;
 }
 
 /*
- * Moves the player.
- * 
- * direction: char direction to move the player in
+ * Moves the Wumpus in a random direction.
  */
-bool moveSuccessful(char direction) {
+void wumpusMovement() {
+	puts("You scared the Wumpus! You hear it running away to another part of the map...");
+	map->coords[map->wum->y][map->wum->x] = 0;
+	placeObject(map->wum, WUM);
+}
+
+/*
+ * Abducts the player and moves them to a new part of the map.
+ */
+void batAbduction() {
+	puts("Some giant friendly bats abduct you and carry you to another part of the map!");
 	map->coords[map->player->y][map->player->x] = 0;
-	switch (direction) {
-		case 'w':
-			map->player->y--;
-			break;
-		case 'a':
-			map->player->x--;
-			break;
-		case 's':
-			map->player->y++;
-			break;
-		case 'd':
-			map->player->x++;
-			break;
-		default:
-			return false;
-	}
-	return true;
+	placeObject(map->player, PLAYER);
 }
 
 /*
- * Allows the player to shoot or move in a given direction.
+ * Ends the game and prints the appropriate statement.
  * 
- * direction: char direction to shoot or move in
+ * condition: 0 if player lost, 1 if player won
  */
-void playerMovement(char direction){
-	switch(direction) {
-	//player shooting
-	case 'W':
-	case 'A':
-	case 'S':
-	case 'D':
-		shoot(direction);
+void endGame(int condition){
+    char c;
+
+	switch (condition){
+	case WUMDEATH:
+		puts("Game Over... The Wumpus got you.");
+		deaths++;
 		break;
-	default:
-		if (playerCanMove(direction) && moveSuccessful(direction)) {
-			if (map->coords[map->player->y][map->player->x] == ARROW) {
-				map->numArrows++;
-				printf("You found an arrow! Arrows remaining: %i.\n", map->numArrows);
-			}
-			map->coords[map->player->y][map->player->x] = PLAYER;
-			checkConsequences();
-			if (!game_over) {
-				whereisPlayer();
-				printMaskedMap();
-			}
-		} else {
-			printf("You could not move in direction: %c. Please try again.\n", direction);
-			printMaskedMap();
-		}
+	case PITDEATH:
+		puts("Game Over... You fell down a pit!");
+		deaths++;
+		break;
+	case PLAYERWIN:
+		puts("You killed the Wumpus! Congratulations!");
+		kills++;
+		break;
 	}
+
+	game_over = true;
+}
+
+/*
+ * Prints the location of the player.
+ * Player location goes left to right and top to bottom.
+ */
+void whereisPlayer() {
+	printf("You are at %i,%i.\n", map->player->x, map->player->y);
 }
 
 /*
@@ -334,29 +367,6 @@ void printMaskedMap() {
 		}
 		puts("");
 	}
-}
-
-/*
- * Places an object on the map.
- * 
- * object: Object to be placed
- * identity: ID of the object to be placed
- */
-void placeObject(Object* object, int identity) {
-	time_t t;
-	srand((unsigned) time(&t));
-
-	int x = rand()%map->width;
-	int y = rand()%map->height;
-	while (map->coords[y][x] != 0) {
-		x = rand()%map->width;
-		y = rand()%map->height;
-	}
-
-	object->x = x;
-	object->y = y;
-
-	map->coords[y][x] = identity;
 }
 
 /*
@@ -411,15 +421,6 @@ void getKeyPress() {
 			playerMovement(s);
 		}
 	}
-}
-
-/*
- * Abducts the player and moves them to a new part of the map.
- */
-void batAbduction() {
-	puts("Some giant friendly bats abduct you and carry you to another part of the map!");
-	map->coords[map->player->y][map->player->x] = 0;
-	placeObject(map->player, PLAYER);
 }
 
 /*
