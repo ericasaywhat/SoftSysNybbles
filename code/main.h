@@ -13,6 +13,7 @@
 #define PIT 1
 #define BAT 2
 #define WUM 3
+#define ARROW 4
 #define PLAYER 5
 
 int playerx, playery;
@@ -28,6 +29,7 @@ typedef struct {
 typedef struct {
 	int width;
 	int height;
+	int numArrows;
 	Object* player;
 	Object* pit;
 	Object* wum;
@@ -55,3 +57,5 @@ void free_map();
 void INThandler(int sig);
 void getKeyPress();
 void batAbduction();
+void placeArrow();
+void whereisPlayer();
