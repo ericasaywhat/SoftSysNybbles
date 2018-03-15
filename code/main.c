@@ -57,14 +57,12 @@ void whereisPlayer() {
  */
 int** coords() {
 	int i, j;
-
 	int** coords = malloc(HEIGHT * WIDTH * sizeof(int*));
 
 	for(i=0; i<HEIGHT; i++) {
 		int* values = calloc(WIDTH*HEIGHT, sizeof(int));
 		coords[i] = values;
 	}
-	
 	return coords;
 }
 
@@ -74,16 +72,18 @@ int** coords() {
  * condition: 0 if player lost, 1 if player won
  */
 void endGame(int condition){
+    char c;
+
 	switch (condition){
 	case 0:
 		puts("Game Over...");
+		game_over = 0;
 		break;
 	case 1:
 		puts("YOU'VE WON!");
+		game_over = 0;
 		break;
-
 	}
-	//TODO: restart game?
 }
 
 /*
@@ -177,7 +177,7 @@ void checkConsequences(){
 }
 
 bool playerCanMove(char direction) {
-	if ((direction == 'a' && map->player->x == 0) || 
+	if ((direction == 'a' && map->player->x == 0) ||
 		(direction == 'd' && map->player->x == WIDTH-1) ||
 		(direction == 's' && map->player->y == HEIGHT-1) |
 		(direction == 'w' && map->player->y == 0) ||
@@ -234,6 +234,11 @@ void playerMovement(char direction){
 			printMap(map);
 		}
 	}
+	map->coords[map->player->y][map->player->x] = PLAYER;
+	if(game_over){
+		checkConsequences(map);
+	}
+	printMap(map);
 }
 
 void printMap() {
@@ -283,10 +288,12 @@ void INThandler(int sig) {
      signal(sig, SIG_IGN);
      printf("\nAre you sure you want to quit? [y/n] ");
      c = getchar();
-     if (c == 'y' || c == 'Y')
+     if (c == 'y' || c == 'Y'){
           exit(0);
-     else
+     }
+     else{
           signal(SIGINT, INThandler);
+     }
      getchar(); // Get new line character
 }
 
@@ -312,16 +319,16 @@ void batAbduction() {
 	placeObject(map->player, PLAYER);
 }
 
-int main() {
+void playGame(){
 	make_map();
-	// int** arr = coords();
-
 	signal(SIGINT, INThandler);
     while (1) {
         getKeyPress();
     }
+}
 
-	// free(*arr);
-	// free(arr);
+int main() {
+	game_over = 1;
+	playGame();
 	return 0;
 }
