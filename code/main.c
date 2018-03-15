@@ -86,7 +86,6 @@ void endGame(int condition){
 	}
 
 	game_over = true;
-	puts("The game has ended.");
 }
 
 /*
@@ -161,31 +160,40 @@ void wumpusMovement() {
 }
 
 void checkConsequences(){
-	if ((map->player->x==map->pit->x &&
-		map->player->y==map->pit->y) ||
-		(map->player->x==map->wum->x &&
-		map->player->y==map->wum->y)) { 
+	int playerx = map->player->x;
+	int playery = map->player->y;
+	int pitx = map->pit->x;
+	int pity = map->pit->y;
+	int wumx = map->wum->x;
+	int wumy = map->wum->y;
+	int batx = map->bat->x;
+	int baty = map->bat->y;
+
+	if ((playerx == pitx &&
+		playery == pity) ||
+		(playerx == pitx &&
+		playery == pity)) { 
 		endGame(0); 
-	} else if (map->player->x==map->bat->x &&
-		map->player->y==map->bat->y) {
+	} else if (playerx == batx &&
+		playery == baty) {
 		batAbduction();
 	} else {
-		if ((map->player->x + 1 == map->wum->x && map->player->y == map->wum->y) ||
-			(map->player->x - 1 == map->wum->x && map->player->y == map->wum->y) || 
-			(map->player->y + 1 == map->wum->y && map->player->x == map->wum->x) ||
-			(map->player->y - 1 == map->wum->y && map->player->x == map->wum->x)) {
+		if ((playerx + 1 == wumx && playery == wumy) ||
+			(playerx - 1 == wumx && playery == wumy) || 
+			(playery + 1 == wumy && playerx == wumx) ||
+			(playery - 1 == wumy && playerx == wumx)) {
 			puts("You smell a wumpus! Proceed with caution...");
 		}
-		if ((map->player->x + 1 == map->pit->x && map->player->y == map->pit->y) ||
-			(map->player->x - 1 == map->pit->x && map->player->y == map->pit->y) || 
-			(map->player->y + 1 == map->pit->y && map->player->x == map->pit->x) ||
-			(map->player->y - 1 == map->pit->y && map->player->x == map->pit->x)) {
+		if ((playerx + 1 == pitx && playery == pity) ||
+			(playerx - 1 == pitx && playery == pity) || 
+			(playery + 1 == pity && playerx == pitx) ||
+			(playery - 1 == pity && playerx == pitx)) {
 			puts("You feel a breeze nearby. Watch your step...");
 		}
-		if ((map->player->x + 1 == map->bat->x && map->player->y == map->bat->y) ||
-			(map->player->x - 1 == map->bat->x && map->player->y == map->bat->y) || 
-			(map->player->y + 1 == map->bat->y && map->player->x == map->bat->x) ||
-			(map->player->y - 1 == map->bat->y && map->player->x == map->bat->x)) {
+		if ((playerx + 1 == batx && playery == baty) ||
+			(playerx - 1 == batx && playery == baty) || 
+			(playery + 1 == baty && playerx == batx) ||
+			(playery - 1 == baty && playerx == batx)) {
 			puts("You hear flapping nearby. Wonder what's making that sound?");
 		}
 	}
