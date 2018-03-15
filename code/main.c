@@ -36,6 +36,7 @@ Map* make_map(){
 	placeObject(map->bat, BAT);
 	placeObject(map->wum, WUM);
 	placeObject(map->player, PLAYER);
+	checkConsequences();
 	whereisPlayer();
 
 	return map;
@@ -170,6 +171,7 @@ void placeArrow() {
  * Moves the wumpus in a random direction.
  */
 void wumpusMovement() {
+	puts("You scared the Wumpus! You hear it running away to another part of the map...");
 	map->coords[map->wum->y][map->wum->x] = 0;
 	placeObject(map->wum, WUM);
 }
@@ -270,9 +272,11 @@ void playerMovement(char direction){
 			checkConsequences();
 			if (!game_over) {
 				whereisPlayer();
+				printMaskedMap();
 			}
 		} else {
 			printf("You could not move in direction: %c. Please try again.\n", direction);
+			printMaskedMap();
 		}
 	}
 }
@@ -285,6 +289,21 @@ void printMap() {
 			printf("%i ", map->coords[i][j]);
 		}
 		puts("\n");
+	}
+}
+
+void printMaskedMap() {
+	int i, j;
+
+	for (i = 0; i < WIDTH; i++) {
+		for (j = 0; j < HEIGHT; j++) {
+			if (map->coords[i][j] == PLAYER) {
+				printf("O ");
+			} else {
+				printf("- ");
+			}
+		}
+		puts("");
 	}
 }
 
@@ -351,6 +370,7 @@ void getKeyPress() {
  * Abducts the player and moves them to a new blok.
  */
 void batAbduction() {
+	puts("Some giant friendly bats abduct you and carry you to another part of the map!");
 	map->coords[map->player->y][map->player->x] = 0;
 	placeObject(map->player, PLAYER);
 }
@@ -358,6 +378,7 @@ void batAbduction() {
 void playGame(){
 	make_map();
 	game_over = false;
+	printMaskedMap();
 
 	while (!game_over) {
 		signal(SIGINT, INThandler);
@@ -373,6 +394,8 @@ int main() {
 	while (want_to_play) {
 		puts("***************************");
 		puts("WELCOME TO HUNT THE WUMPUS!");
+		puts("Use lowercase wasd keys to move around the map.");
+		puts("Use uppercase WASD keys to shoot arrows. (You start out with 5.)");
 		printf("You have killed the Wumpus %i times.\n",
 			kills);
 		printf("You have died %i times.\n",
