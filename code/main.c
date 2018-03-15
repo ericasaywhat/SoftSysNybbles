@@ -1,10 +1,21 @@
 #include "main.h"
 
+/*
+ * Allocates space to an Object and returns a pointer to the Object.
+ * 
+ * return: pointer to newly created Object
+ */
 Object* make_object(){
 	Object* obj = malloc(sizeof(Object));
 	return obj;
 }
 
+/*
+ * Creates the game Map, including placing Objects on the Map.
+ * Initializes locations of the player, the pit, the Wumpus, and the bats.
+ * 
+ * return: pointer to newly created Map
+ */
 Map* make_map(){
 	map = malloc(sizeof(Map));
 	map->width = 5;
@@ -31,10 +42,19 @@ Map* make_map(){
 	return map;
 }
 
+/*
+ * Prints the location of the player.
+ * Player location goes left to right and top to bottom.
+ */
 void whereisPlayer() {
 	printf("You are at %i,%i.\n", map->player->x, map->player->y);
 }
 
+/*
+ * Generates an empty 2D array for a Map to populate.
+ * 
+ * return: pointer to pointer to 2D array
+ */
 int** coords() {
 	int i, j;
 
@@ -44,11 +64,15 @@ int** coords() {
 		int* values = calloc(WIDTH*HEIGHT, sizeof(int));
 		coords[i] = values;
 	}
-
-
+	
 	return coords;
 }
 
+/*
+ * Ends the game and prints the appropriate statement.
+ * 
+ * condition: 0 if player lost, 1 if player won
+ */
 void endGame(int condition){
 	switch (condition){
 	case 0:
@@ -62,6 +86,11 @@ void endGame(int condition){
 	//TODO: restart game?
 }
 
+/*
+ * Shoots an arrow in the direction inputted by the user.
+ * 
+ * direction: char direction to shoot in ('WASD')
+ */
 void shoot(char direction){
 	if (map->numArrows == 0) {
 		puts("You are out of arrows! Try walking around to find more.");
