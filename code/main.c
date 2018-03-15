@@ -76,14 +76,17 @@ void endGame(int condition){
 
 	switch (condition){
 	case 0:
-		puts("Game Over...");
-		game_over = 0;
+		puts("Game Over... The Wumpus got you.");
+		deaths++;
 		break;
 	case 1:
-		puts("YOU'VE WON!");
-		game_over = 0;
+		puts("You killed the Wumpus! Congratulations!");
+		kills++;
 		break;
 	}
+
+	game_over = true;
+	puts("The game has ended.");
 }
 
 /*
@@ -124,11 +127,13 @@ void shoot(char direction){
 				break;
 		}
 
-		printf("You successfully shot an arrow in direction %c. Arrows remaining: %i.\n",
+		if (!endGame) {
+			printf("You successfully shot an arrow in direction %c. Arrows remaining: %i.\n",
 			direction, map->numArrows);
 
-		if (map->numArrows == 0) {
-			placeArrow();
+			if (map->numArrows == 0) {
+				placeArrow();
+			}
 		}
 	}
 }
@@ -234,11 +239,10 @@ void playerMovement(char direction){
 			printMap(map);
 		}
 	}
-	map->coords[map->player->y][map->player->x] = PLAYER;
-	if(game_over){
+	
+	if (!game_over){
 		checkConsequences(map);
 	}
-	printMap(map);
 }
 
 void printMap() {
@@ -321,14 +325,39 @@ void batAbduction() {
 
 void playGame(){
 	make_map();
-	signal(SIGINT, INThandler);
-    while (1) {
-        getKeyPress();
-    }
+	game_over = false;
+
+	while (!game_over) {
+		signal(SIGINT, INThandler);
+	    getKeyPress();
+	}
 }
 
 int main() {
-	game_over = 1;
-	playGame();
+	char response[2];
+	want_to_play = true;
+	kills = 0;
+	deaths = 0;
+	while (want_to_play) {
+		puts("***************************");
+		puts("WELCOME TO HUNT THE WUMPUS!");
+		printf("You have killed the Wumpus %i times.\n",
+			kills);
+		printf("The Wumpus has eaten you %i times.\n",
+			deaths);
+		puts("Good luck!");
+		puts("***************************\n");
+		playGame();
+		printf("Would you like to play again? [y/n] ");
+		scanf("%s", response);
+		if (response[0] == 'n') {
+			puts("Exiting...");
+			want_to_play = false;
+		} else {
+			puts("Great, let's play another round!\n");
+		}
+		free_map();
+		free_objects();
+	}
 	return 0;
 }
