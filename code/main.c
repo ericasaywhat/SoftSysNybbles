@@ -153,6 +153,9 @@ void shoot(char direction){
 	}
 }
 
+/*
+ * Places an arrow at a random location in the map.
+ */
 void placeArrow() {
 	time_t t;
 	srand((unsigned) time(&t));
@@ -168,7 +171,7 @@ void placeArrow() {
 }
 
 /*
- * Moves the wumpus in a random direction.
+ * Moves the Wumpus in a random direction.
  */
 void wumpusMovement() {
 	puts("You scared the Wumpus! You hear it running away to another part of the map...");
@@ -176,6 +179,11 @@ void wumpusMovement() {
 	placeObject(map->wum, WUM);
 }
 
+/*
+ * Checks consequences of the player's location.
+ * If they are on the Wumpus or the pit, the game ends.
+ * If they are near the Wumpus, a pit, or a bat, a text prompt is printed.
+ */
 void checkConsequences(){
 	int playerx = map->player->x;
 	int playery = map->player->y;
@@ -219,6 +227,11 @@ void checkConsequences(){
 	}
 }
 
+/*
+ * Determines whether it's possible for the player to move in the given direction.
+ * 
+ * direction: char direction the player wants to move in
+ */
 bool playerCanMove(char direction) {
 	if ((direction == 'a' && map->player->x == 0) ||
 		(direction == 'd' && map->player->x == WIDTH-1) ||
@@ -232,6 +245,11 @@ bool playerCanMove(char direction) {
 	}
 }
 
+/*
+ * Moves the player.
+ * 
+ * direction: char direction to move the player in
+ */
 bool moveSuccessful(char direction) {
 	map->coords[map->player->y][map->player->x] = 0;
 	switch (direction) {
@@ -253,6 +271,11 @@ bool moveSuccessful(char direction) {
 	return true;
 }
 
+/*
+ * Allows the player to shoot or move in a given direction.
+ * 
+ * direction: char direction to shoot or move in
+ */
 void playerMovement(char direction){
 	switch(direction) {
 	//player shooting
@@ -281,6 +304,9 @@ void playerMovement(char direction){
 	}
 }
 
+/*
+ * Prints the map. (Just used for debugging.)
+ */
 void printMap() {
 	int i, j;
 
@@ -292,6 +318,9 @@ void printMap() {
 	}
 }
 
+/*
+ * Prints a masked version of the map for visual aid.
+ */
 void printMaskedMap() {
 	int i, j;
 
@@ -307,6 +336,12 @@ void printMaskedMap() {
 	}
 }
 
+/*
+ * Places an object on the map.
+ * 
+ * object: Object to be placed
+ * identity: ID of the object to be placed
+ */
 void placeObject(Object* object, int identity) {
 	time_t t;
 	srand((unsigned) time(&t));
@@ -324,8 +359,9 @@ void placeObject(Object* object, int identity) {
 	map->coords[y][x] = identity;
 }
 
-
-
+/*
+ * Frees the objects (player, bat, pit, Wumpus).
+ */
 void free_objects(){
 	free(map->player);
 	free(map->bat);
@@ -333,10 +369,18 @@ void free_objects(){
 	free(map->wum);
 }
 
+/*
+ * Frees the map.
+ */
 void free_map(){
 	free(map);
 }
 
+/*
+ * Handles a signal (generally, CTRL+C for quitting).
+ *
+ * sig: integer signal to be handled
+ */
 void INThandler(int sig) {
      char  c;
 
@@ -352,6 +396,9 @@ void INThandler(int sig) {
      getchar(); // Get new line character
 }
 
+/*
+ * Retrieves keys pressed by the user as commands for the game.
+ */
 void getKeyPress() {
 	char s;
 	int i;
@@ -367,7 +414,7 @@ void getKeyPress() {
 }
 
 /*
- * Abducts the player and moves them to a new blok.
+ * Abducts the player and moves them to a new part of the map.
  */
 void batAbduction() {
 	puts("Some giant friendly bats abduct you and carry you to another part of the map!");
@@ -375,6 +422,9 @@ void batAbduction() {
 	placeObject(map->player, PLAYER);
 }
 
+/*
+ * Creates a new map and runs the game.
+ */
 void playGame(){
 	make_map();
 	game_over = false;
@@ -411,8 +461,8 @@ int main() {
 		} else {
 			puts("Great, let's play another round!\n");
 		}
+		free_objects(); // free objects before map
 		free_map();
-		free_objects();
 	}
 	return 0;
 }
