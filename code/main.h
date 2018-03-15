@@ -45,23 +45,24 @@ typedef struct {
 
 Map* map;
 
-Object* make_object();
 Map* make_map();
-int** coords();
-void playGame();
-void INThandler(int);
-void endGame(int condition);
-void shoot(char direction);
-void wumpusMovement();
-void checkConsequences();
-void playerMovement(char direction);
-void printMap();
+Object* make_object();
 void placeObject(Object* object, int identity);
+int** coords();
+void playerMovement(char direction);
+bool playerCanMove(char direction);
+bool moveSuccessful(char direction);
+void shoot(char direction);
+void placeArrow();
+void checkConsequences();
+void wumpusMovement();
+void batAbduction();
+void endGame(int condition);
+void whereisPlayer();
+void printMap();
+void printMaskedMap();
 void free_objects();
 void free_map();
 void INThandler(int sig);
 void getKeyPress();
-void batAbduction();
-void placeArrow();
-void whereisPlayer();
-void printMaskedMap();
+void playGame();
