@@ -37,7 +37,6 @@ Map* make_map(){
 	placeObject(map->wum, WUM);
 	placeObject(map->player, PLAYER);
 	whereisPlayer();
-	printMap();
 
 	return map;
 }
@@ -75,11 +74,15 @@ void endGame(int condition){
     char c;
 
 	switch (condition){
-	case 0:
+	case WUMDEATH:
 		puts("Game Over... The Wumpus got you.");
 		deaths++;
 		break;
-	case 1:
+	case PITDEATH:
+		puts("Game Over... You fell down a pit!");
+		deaths++;
+		break;
+	case PLAYERWIN:
 		puts("You killed the Wumpus! Congratulations!");
 		kills++;
 		break;
@@ -101,29 +104,41 @@ void shoot(char direction){
 
 		switch(direction) {
 			case 'W':
-				if (map->player->y > map->wum->y &&
-					map->player->x == map->wum->x){  endGame(1); }
-				else if(map->player->y < map->wum->y &&
-					map->player->x == map->wum->x){  wumpusMovement();  }
-				break;
+			if (map->player->y < map->wum->y &&
+				map->player->x == map->wum->x) { 
+				wumpusMovement();
+			} else if (map->player->y > map->wum->y &&
+				map->player->x == map->wum->x) { 
+				endGame(PLAYERWIN);
+			}
+			break;
 			case 'S':
-				if(map->player->y > map->wum->y  &&
-					map->player->x == map->wum->x){  wumpusMovement();  }
-				else if(map->player->y < map->wum->y &&
-					map->player->x == map->wum->x){  endGame(1); }
-				break;
+			if(map->player->y > map->wum->y &&
+				map->player->x == map->wum->x){ 
+				wumpusMovement();
+			} else if(map->player->y < map->wum->y &&
+				map->player->x == map->wum->x){
+				endGame(PLAYERWIN);
+			}
+			break;
 			case 'A':
-				if(map->player->x > map->wum->x &&
-					map->player->y == map->wum->y){  endGame(1); }
-				else if(map->player->x < map->wum->x &&
-					map->player->y == map->wum->y){  wumpusMovement();  }
-				break;
+			if(map->player->x < map->wum->x &&
+				map->player->y == map->wum->y){ 
+				wumpusMovement(); 
+			} else if (map->player->x > map->wum->x &&
+				map->player->y == map->wum->y) { 
+				endGame(PLAYERWIN);
+			}
+			break;
 			case 'D':
-				if(map->player->x > map->wum->x &&
-					map->player->y == map->wum->y){  wumpusMovement();  }
-				else if(map->player->x < map->wum->x &&
-					map->player->y == map->wum->y){  endGame(1); }
-				break;
+			if(map->player->x > map->wum->x &&
+				map->player->y == map->wum->y){ 
+				wumpusMovement();
+			} else if(map->player->x < map->wum->x &&
+				map->player->y == map->wum->y){
+				endGame(PLAYERWIN);
+			}
+			break;
 		}
 
 		if (!endGame) {
@@ -173,10 +188,13 @@ void checkConsequences(){
 		playery == pity) ||
 		(playerx == pitx &&
 		playery == pity)) { 
-		endGame(0); 
+		endGame(PITDEATH); 
 	} else if (playerx == batx &&
 		playery == baty) {
 		batAbduction();
+	} else if (playerx == wumx &&
+		playery == wumy) {
+		endGame(WUMDEATH);
 	} else {
 		if ((playerx + 1 == wumx && playery == wumy) ||
 			(playerx - 1 == wumx && playery == wumy) || 
@@ -249,17 +267,13 @@ void playerMovement(char direction){
 				printf("You found an arrow! Arrows remaining: %i.\n", map->numArrows);
 			}
 			map->coords[map->player->y][map->player->x] = PLAYER;
-			checkConsequences(map);
-			whereisPlayer();
-			printMap(map);
+			checkConsequences();
+			if (!game_over) {
+				whereisPlayer();
+			}
 		} else {
 			printf("You could not move in direction: %c. Please try again.\n", direction);
-			printMap(map);
 		}
-	}
-	
-	if (!game_over){
-		checkConsequences(map);
 	}
 }
 
@@ -361,7 +375,7 @@ int main() {
 		puts("WELCOME TO HUNT THE WUMPUS!");
 		printf("You have killed the Wumpus %i times.\n",
 			kills);
-		printf("The Wumpus has eaten you %i times.\n",
+		printf("You have died %i times.\n",
 			deaths);
 		puts("Good luck!");
 		puts("***************************\n");
