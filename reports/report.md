@@ -161,7 +161,7 @@ Are you sure you want to quit? [y/n] y
 
 #### Reflection
 
-In making our final product, we were able to meet all of our learning goals. We implemented structs and pointers, allocated and freed memory on the heap, and followed C coding conventions. We extended our MVP by adding the pit, bats, and finding random arrows that is in the original _Hunt the Wumpus_ game. 
+In making our final product, we were able to meet all of our learning goals, and then some. We implemented structs and pointers, allocated and freed memory on the heap, and followed C coding conventions by moving macro and function definitions to a header file and using sensible style practices. We learned a little bit about using signals to detect keystrokes and prevent premature termination of our program and we learned how to locate and fix memory leaks. We extended our MVP by adding the pit, the bats, and the ability to find randomly located arrows, which are gameplay features that can be found in the original _Hunt the Wumpus_ game, in addition to a visual map and the ability to replay the game. Overall, we are satisfied with our final product, and hope that it will be as fun for others to play as it was for us to implement.
 
 #### Resources
 
