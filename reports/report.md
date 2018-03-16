@@ -83,6 +83,61 @@ void INThandler(int sig) {
 
 This ensures that the player is able to continue playing for as long as they want. Since the player is able to play the game multiple times, we also decided to implement a way to keep track of the score in the game - every time the player defeats the Wumpus, the value of `int kills` increases, every time the player is defeated by the Wumpus, the value of `int deaths` increases, and every time the player falls down a bottomless pit, the value of `int deaths` increases again.
 
+#### Preventing Memory Leaks
+
+We ran the game with Valgrind to find out if we leaked any memory, and initially, we did. We leaked some memory because while we freed all of the objects and the map, we failed to free the individual rows of the map. The code below demonstrates how the coordinates of the map, `map->coords`, is implemented.
+
+```
+int** coords() {
+    int i, j;
+    int** coords = malloc(HEIGHT * WIDTH * sizeof(int*));
+
+    for(i=0; i<HEIGHT; i++) {
+        int* values = calloc(WIDTH*HEIGHT, sizeof(int));
+        coords[i] = values;
+    }
+    return coords;
+}
+```
+
+Therefore, to free all the memory that the program uses, we must free the rows of the coordinates of the map, as well. At the end of the program, then, we call `free_objects`, which frees the player, the Wumpus, the bats, and the pit objects, followed by `free_map`, which frees the coordinates of the map and then the map itself. We found that the order of the calls to these functions matters, as we need to ensure that all the objects in the map are freed before the map is freed.
+
+After fixing the leaks that Valgrind detected, this is our output, which shows that we no longer leak any memory.
+
+```
+==31019== Memcheck, a memory error detector
+==31019== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==31019== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==31019== Command: ./main
+==31019== 
+***************************
+WELCOME TO HUNT THE WUMPUS!
+Use lowercase wasd keys to move around the map.
+Use uppercase WASD keys to shoot arrows. (You start out with 5.)
+You have killed the Wumpus 0 times.
+You have died 0 times.
+Good luck!
+***************************
+
+You are at 3,2.
+- - - - - 
+- - - - - 
+- - - O - 
+- - - - - 
+- - - - - 
+^C
+Are you sure you want to quit? [y/n] y
+==31019== 
+==31019== HEAP SUMMARY:
+==31019==     in use at exit: 0 bytes in 0 blocks
+==31019==   total heap usage: 13 allocs, 13 frees, 2,836 bytes allocated
+==31019== 
+==31019== All heap blocks were freed -- no leaks are possible
+==31019== 
+==31019== For counts of detected and suppressed errors, rerun with: -v
+==31019== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+```
+
 #### Reflection
 
 In making our final product, we were able to meet all of our learning goals. We implemented structs and pointers, allocated and freed memory on the heap, and followed C coding conventions. We extended our MVP by adding the pit, bats, and finding random arrows that is in the original _Hunt the Wumpus_ game. 
