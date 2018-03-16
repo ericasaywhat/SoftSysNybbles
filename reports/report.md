@@ -165,5 +165,4 @@ In making our final product, we were able to meet all of our learning goals, and
 
 #### Resources
 
-We would like to thank Head First C by David and Dawn Griffiths for being a resource with regards to structs and pointers usages. We would also like to thank Stack Overflow for containing the answers to most of our questions. Last, but not least, we would like to thank the Software Systems teaching team (Allen and Serena) for supporting us in our endeavors.
-
+We would like to thank _Head First C_ by David and Dawn Griffiths for being a resource with regards to structs and pointers usages, as well as _ThinkOS_ by Allen Downey for being a resource with regards to memory management and best coding practices in C. We would also like to thank Stack Overflow for containing the answers to most of our questions. Last, but not least, we would like to thank the Software Systems teaching team (Allen and Serena) for supporting us in our endeavors.
