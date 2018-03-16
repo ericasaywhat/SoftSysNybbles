@@ -14,7 +14,7 @@ Our rendition of _Hunt the Wumpus_ implements all of these behaviors and stays a
 
 #### Implementation Details
 
-In the header file `main.h`, we list macros and the declarations of global variables and functions, as well as two important structs: `Object` and `Map`.
+In the header file [`main.h`](https://github.com/ericasaywhat/SoftSysNybbles/blob/master/code/main.h), we list macros and the declarations of global variables and functions, as well as two important structs: `Object` and `Map`.
 
 ```
 typedef struct {
@@ -56,7 +56,7 @@ You are at 3,2.
 - - - - - 
 ```
 
-Our minimum viable product is a game that includes a target enemy - the Wumpus, a mechanism by which the player can shoot arrows to defeat the Wumpus, and a map that is displayed in the terminal around which the player can move. We successfully implemented these features, as the above snippet demonstrates, then moved on to include more features.
+Our minimum viable product is a game that includes a target enemy - the Wumpus, a mechanism by which the player can shoot arrows to defeat the Wumpus, and a map that is displayed in the terminal around which the player can move. We successfully implemented these features, as the above snippet demonstrates, then moved on to include more features. The file [`main.c`](https://github.com/ericasaywhat/SoftSysNybbles/blob/master/code/main.c) contains the code for the game, and includes `main.h`.
 
 A visual map was not a part of the original _Hunt the Wumpus_ game; however, we found that a map makes the game easier to play, since it allows the player to see where they are on the map. None of the other features (the Wumpus, the pit, or the bats) are visible on the map, so we decided that the map is a harmless addition that does not significantly affect the gameplay.
 
