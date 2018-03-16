@@ -58,9 +58,22 @@ You are at 3,2.
 
 Our minimum viable product is a game that includes a target enemy - the Wumpus, a mechanism by which the player can shoot arrows to defeat the Wumpus, and a map that is displayed in the terminal around which the player can move. We successfully implemented these features, as the above snippet demonstrates, then moved on to include more features. The file [`main.c`](https://github.com/ericasaywhat/SoftSysNybbles/blob/master/code/main.c) contains the code for the game, and includes [`main.h`](https://github.com/ericasaywhat/SoftSysNybbles/blob/master/code/main.h).
 
-A visual map was not a part of the original _Hunt the Wumpus_ game; however, we found that a map makes the game easier to play, since it allows the player to see where they are on the map. None of the other features (the Wumpus, the pit, or the bats) are visible on the map, so we decided that the map is a harmless addition that does not significantly affect the gameplay.
+A visual map was not a part of the original _Hunt the Wumpus_ game; however, we found that a map makes the game easier to play, since it allows the player to see where they are on the map. None of the other features (the Wumpus, the pit, or the bats) are visible on the map, so we decided that the map is a harmless addition that only enhances the experience of playing the game.
 
-We want the player to be able to play the game as many times as possible, so we implemented this feature. We implement the game using signals; while `bool game_over` is not true, we use a signal handler to listen for keystrokes that indicate the direction the player would like to move or shoot; if the player tries to exit the program using `CTRL+C`, for example, instead of exiting the program instantly, we check to make sure the player really wants to quit using the following code.
+We want the player to be able to play the game as many times as possible, so we implemented the ability to replay the game. We accomplish this using a boolean `want_to_play`, which indicates whether user wants to continue to play after finishing a game, and only running the game while `want_to_play` is true. The following code demonstrates what happens after a game ends.
+
+```
+printf("Would you like to play again? [y/n] ");
+scanf("%s", response);
+if (response[0] == 'n') {
+    puts("Exiting...");
+    want_to_play = false; // exit the while loop
+} else {
+    puts("Great, let's play another round!\n");
+}
+```
+
+We implement the game using signals; while the boolean `game_over` is not true, we use a signal handler to listen for keystrokes that indicate the direction the player would like to move or shoot. If the player tries to exit the program using `CTRL+C`, for example, instead of exiting the program instantly, we check to make sure the player really wants to quit using the following code.
 
 ```
 void INThandler(int sig) {
@@ -81,7 +94,7 @@ void INThandler(int sig) {
 }
 ```
 
-This ensures that the player is able to continue playing for as long as they want. Since the player is able to play the game multiple times, we also decided to implement a way to keep track of the score in the game - every time the player defeats the Wumpus, the value of `int kills` increases, every time the player is defeated by the Wumpus, the value of `int deaths` increases, and every time the player falls down a bottomless pit, the value of `int deaths` increases again.
+This ensures that the player is able to continue playing for as long as they want. Since the player is able to play the game multiple times, we also decided to implement a way to keep track of the score in the game - every time the player defeats the Wumpus, the value of the integer `kills` increases, every time the player is defeated by the Wumpus, the value of the integer `deaths` increases, and every time the player falls down a bottomless pit, the value of the integer `deaths` increases again.
 
 #### Preventing Memory Leaks
 
