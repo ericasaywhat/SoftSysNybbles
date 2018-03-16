@@ -58,9 +58,15 @@ You are at 3,2.
 
 Our minimum viable product is a game that includes a target enemy - the Wumpus, a mechanism by which the player can shoot arrows to defeat the Wumpus, and a map that is displayed in the terminal around which the player can move. We successfully implemented these features, as the above snippet demonstrates, then moved on to include more features. The file [`main.c`](https://github.com/ericasaywhat/SoftSysNybbles/blob/master/code/main.c) contains the code for the game, and includes [`main.h`](https://github.com/ericasaywhat/SoftSysNybbles/blob/master/code/main.h).
 
-A visual map was not a part of the original _Hunt the Wumpus_ game; however, we found that a map makes the game easier to play, since it allows the player to see where they are on the map. None of the other features (the Wumpus, the pit, or the bats) are visible on the map, so we decided that the map is a harmless addition that only enhances the experience of playing the game.
+We implement almost all of the rules that are part of the original _Hunt the Wumpus_ game. Initially, the player has five arrows that they can use to defeat the Wumpus; if they run out of arrows, a new arrow appears at a random location on the map, which the player can pick up by moving to it. When the player shoots an arrow at the Wumpus and misses by one row or column, the Wumpus relocates to a random location on the map. When the player moves to the same location as the bats, the player is carried away to a random location on the map. Finally, if a player moves to the same location as the Wumpus or the pit, the player effectively "dies" and the game ends. The only feature of the original _Hunt the Wumpus_ game that we fail to implement is the dodecahedron aspect of the map; the map in the original game is shaped like a squashed dodecahedron, like the image below illustrates, so that each node is connected to three other locations.
 
-We want the player to be able to play the game as many times as possible, so we implemented the ability to replay the game. We accomplish this using a boolean `want_to_play`, which indicates whether user wants to continue to play after finishing a game, and only running the game while `want_to_play` is true. The following code demonstrates what happens after a game ends.
+![squashed dodecahedron](http://www.ballyalley.com/program_downloads/300_baud_programs/cursor/Wumpus/Wumus%20(Room%20Map)(Dodecahedron%20Diagram).gif)
+
+For the sake of simplicity and practice with using two-dimensional arrays, we decided not to implement the map in this style and instead chose to use a two-dimensional array.
+
+In addition, a visual map was not a part of the original _Hunt the Wumpus_ game; however, we found that a map makes the game easier to play, since it allows the player to see where they are on the map. None of the other features (the Wumpus, the pit, or the bats) are visible on the map, so we decided that the map is a harmless addition that only enhances the experience of playing the game.
+
+As another additional feature, we believe that the player should be able to play the game as many times as they want without having to run the program again, so we implemented the ability to replay the game. We accomplish this using a boolean `want_to_play`, which indicates whether user wants to continue to play after finishing a game, and only running the game while `want_to_play` is true. The following code demonstrates what happens after a game ends.
 
 ```
 printf("Would you like to play again? [y/n] ");
@@ -72,6 +78,8 @@ if (response[0] == 'n') {
     puts("Great, let's play another round!\n");
 }
 ```
+
+For as long as `want_to_play` is true, the game plays and replays infinitely. Otherwise, the program exits the while loop and the game ends.
 
 We implement the game using signals; while the boolean `game_over` is not true, we use a signal handler to listen for keystrokes that indicate the direction the player would like to move or shoot. If the player tries to exit the program using `CTRL+C`, for example, instead of exiting the program instantly, we check to make sure the player really wants to quit using the following code.
 
